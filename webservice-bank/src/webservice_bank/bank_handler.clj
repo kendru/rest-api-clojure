@@ -44,7 +44,7 @@
   (route/routing
     ; curl -v http://localhost:3001/bank
     (route/with-route-matches :get "/" get-test)
-    (route/with-route-matches :get "/:acc-number" get-balance) ; Error, is not taking the acc-number from request
+    (route/with-route-matches :get "/:acc-number" get-balance) ; Error,  is not taking the acc-number from request
     json-error-handler))
 
 
