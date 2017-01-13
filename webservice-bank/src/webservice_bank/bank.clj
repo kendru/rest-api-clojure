@@ -1,9 +1,5 @@
 (ns webservice-bank.bank
-  
    (:require [clj-time.core :as t]))
-
-(defn get-blog-entries[]
-  (+ 2 5))
 
 (defn date [year month day]
   "Create local date"
@@ -17,6 +13,7 @@
 ; CREATE ACCOUNT  --------------------------------------------------------------------
 ; (create-account "Mauricio Junior" 1122334455)
 
+
 (defn prepare-account [name account-number]
   "Create account"
   (ref {:name name :account-number account-number :operations []}))
@@ -24,8 +21,7 @@
 (defn create-account [name acc-number]
   "Create bank account"
   (let [acc (prepare-account name acc-number)]
-     (swap! bank update-in [:accounts] assoc (:account-number @acc) acc)
-     (str name " " acc-number)))
+     (swap! bank update-in [:accounts] assoc (:account-number @acc) acc)))
 
 
 ; FIRST STEP CREATE OPERATION  -----------------------------------------------------------------
@@ -33,58 +29,28 @@
 
 (defn prepare-operation [desc amount year month day]
   "Create transaction"
- (ref (merge {:desc desc :amount amount :date (date year month day)})))
+ (ref {:desc desc :amount amount :date (date year month day)}))
 
 (defn create-operation [acc-number desc amount year month day]
   "Create operation"
   (dosync
     (let [acc (get (:accounts @bank) acc-number)]
         (alter acc update-in [:operations] 
-               conj (prepare-operation desc amount year month day))
-        (str amount " " acc-number))))
-
+               conj (prepare-operation desc amount year month day)))))
 
 ; SECOND STEP GET CURRENT BALANCE  -----------------------------------------------------------------
 ; (get-balance 12345678)
 
-(def amounts-for-balance
-  (atom []))
-
-(defn prepare-amounts-from-account [acc-number]
-  (let [acc (get (:accounts @bank) acc-number)]
-    (doseq [tran (:operations @acc)]
-      (swap! amounts-for-balance conj (tran :amount)))))
-
-(defn teste [acc-number]
+(defn get-balance [acc-number]
    (let [acc (get (:accounts @bank) acc-number)]
       (let [tran (:operations @acc)]
-        tran)))
-
-(defn teste2 [acc-number]
-  (reduce conj [] 
-          (let [acc (get (:accounts @bank) acc-number)]
-            (let [tran (:operations @acc)]
-               tran))))
-
-(def vetor
-  [(ref {:desc "DESC1" :amount 100}) (ref {:desc "DESC2" :amount 200}) (ref {:desc "DESC3" :amount 300})])
-
-(def vetor1
-  [{:desc "DESC1" :amount 100} {:desc "DESC2" :amount 200}])
-
-; (get @(first op) :amount)
-;(first @(first vetor))
-
-(defn get-balance [acc-number]
-  (do
-    (prepare-amounts-from-account acc-number)
-    {:balance (reduce + (map + @amounts-for-balance))}))
-
-
+        (reduce + 0 (vec (map #(-> % deref :amount) tran))))))
 
 
 ; THIRD STEP GET BANK STATMENT  -----------------------------------------------------------------
 ; (get-balance-per-day op)
+
+
 
 (def operations-for-statment
   (atom [])) ; Para acessar cada operacao utilizar @joey @
@@ -110,6 +76,18 @@
       (fn [[{date :date} :as txns]]
         {:date date :balance 
          (reduce + (map :amount txns))}))))
+
+(defn get-balance [acc-number]
+   (let [acc (get (:accounts @bank) acc-number)]
+      (let [tran (:operations @acc)]
+        (reduce + 0 (vec (map #(-> % deref :amount) tran))))))
+
+(def vetor
+  [(ref {:desc "DESC1" :amount 100})
+   (ref {:desc "DESC2" :amount 200})
+   (ref {:desc "DESC3" :amount 300})])
+
+
 
 
 ; FORTH STEP PERIODS OF DEBIT  -----------------------------------------------------------------
