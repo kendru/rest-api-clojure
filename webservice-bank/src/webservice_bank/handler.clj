@@ -20,7 +20,7 @@
   "Treat not found endpoint"
  (fn [request]
   (or (handler request)
-   {:status 404 :body (str "404 Not Found (with middleware!):" (:uri request))})))
+   {:status 404 :body (str "404 Not Found:" (:uri request))})))
 
 
 (compojure/defroutes route-handler

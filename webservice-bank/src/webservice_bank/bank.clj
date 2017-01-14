@@ -27,6 +27,7 @@
 ; FIRST STEP CREATE OPERATION  -----------------------------------------------------------------
 ; (create-operation 12345678 "DEPOSIT ATM" 1000 2017 01 10)
 
+
 (defn prepare-operation [desc amount year month day]
   "Create transaction"
  (ref {:desc desc :amount amount :date (date year month day)}))
@@ -42,6 +43,7 @@
 ; (get-balance 12345678)
 
 (defn get-balance [acc-number]
+  "Get balance from account"
    (let [acc (get (:accounts @bank) acc-number)]
       (let [tran (:operations @acc)]
         (reduce + 0 (vec (map #(-> % deref :amount) tran))))))
@@ -50,77 +52,62 @@
 ; THIRD STEP GET BANK STATMENT  -----------------------------------------------------------------
 ; (get-balance-per-day op)
 
+(def operations-test (atom [])) 
 
-
-(def operations-for-statment
-  (atom [])) ; Para acessar cada operacao utilizar @joey @
-
-(def op
-  [{:desc "DESC1" :amount 100 :date (date 2017 01 10)}
-   {:desc "DESC2" :amount 100 :date (date 2017 01 10)}
-   {:desc "DESC3" :amount 200 :date (date 2017 01 11)}
-   {:desc "DESC4" :amount 200 :date (date 2017 01 11)}
-   {:desc "DESC5" :amount 100 :date (date 2017 01 12)}
-   {:desc "DESC6" :amount -50 :date (date 2017 01 12)}
-   {:desc "DESC7" :amount -100 :date (date 2017 01 13)}
-   {:desc "DESC8" :amount -100 :date (date 2017 01 13)}])
-
-
-(def get-all-operations-from-bank
+(defn get-all-operations-from-bank []
   (doseq [acc (vals (:accounts @bank))]
-    (swap! operations-for-statment conj (acc :operations))))
+   (doseq [op (acc :operations)]
+     (swap! operations-test conj @op))))
 
-(defn get-balance-per-day [txns]
-  (->> txns (partition-by :date) 
+(defn teste [] ; Traz todas as operacoes de todas as contas colocar no get-balance-per-day
+  (let [acc (:accounts @bank)]
+    (map #(-> % deref :operations) (vals acc))))
+
+(defn test2 []
+  (let [operations (teste)]
+    operations))
+
+(defn get-balance-per-day []
+  (get-all-operations-from-bank)
+  (->> @operations-test (partition-by :date) 
     (map 
-      (fn [[{date :date} :as txns]]
+      (fn [[{date :date} :as operations-test]]
         {:date date :balance 
-         (reduce + (map :amount txns))}))))
-
-(defn get-balance [acc-number]
-   (let [acc (get (:accounts @bank) acc-number)]
-      (let [tran (:operations @acc)]
-        (reduce + 0 (vec (map #(-> % deref :amount) tran))))))
-
-(def vetor
-  [(ref {:desc "DESC1" :amount 100})
-   (ref {:desc "DESC2" :amount 200})
-   (ref {:desc "DESC3" :amount 300})])
-
-
+         (reduce + (map :amount operations-test))}))))
 
 
 ; FORTH STEP PERIODS OF DEBIT  -----------------------------------------------------------------
 ; (get-all-operations-from-acc 12345678)
 ; (get-periods-of-debit op2)
 
-(def operations-for-debit
-  (atom []))
+(def trxs-acc (atom [])) ; a resposta esta vindo com dois vector [[ ]]
 
-(def op2
-  [{:desc "DESC1" :amount 100 :date (date 2017 01 10)}
-   {:desc "DESC2" :amount 100 :date (date 2017 01 10)}
-   {:desc "DESC3" :amount 200 :date (date 2017 01 11)}
-   {:desc "DESC4" :amount 200 :date (date 2017 01 11)}
-   {:desc "DESC5" :amount 100 :date (date 2017 01 12)}
-   {:desc "DESC6" :amount -50 :date (date 2017 01 12)}
-   {:desc "DESC7" :amount -100 :date (date 2017 01 13)}
-   {:desc "DESC8" :amount -100 :date (date 2017 01 13)}])
+(defn get-all-operations-from-account []
+   (doseq [op (@joey :operations)]
+     (swap! trxs-acc conj @op)))
 
-(defn get-all-operations-from-acc [acc-number]
-   (let [acc (get (:accounts @bank) acc-number)]
-     (doseq [tran (:operations @acc)]
-        (swap! operations-for-debit conj tran :amount))))
-;;  (reduce + (map :amount txns))}))))
+(defn get-balance-per-day-account []
+  (get-all-operations-from-account)
+  (->> @trxs-acc (partition-by :date) 
+    (map 
+      (fn [[{date :date} :as trxs-acc]]
+        {:date date :balance 
+         (reduce + (map :amount trxs-acc))}))))
 
-(defn negative [trx]
-  (prn (str (trx :date) ":" (trx :balance))))
+(defn negative []
+  (when (neg? (get-balance (@joey :account-number)))
+   ))
 
-(defn get-periods-of-debit [operations]
-  (doseq [trx (get-balance-per-day operations)]
-    (if (pos? (trx :balance))
-      :true
-       (negative trx))))
+; (filter #(neg? :balance) (get-balance-per-day-account))
+
+; (map )
+
+; (filter #(= (count %) 1) ["a" "aa" "b" "n" "f" "lisp" "clojure" "q" ""])
+    
+; (create-operation 12345678 "DEPOSIT ATM" -1000 2017 01 10)
+; (get-balance 12345678)
+
+
 
 
 ; TEST ----------------------------------------------------------------------------
@@ -150,6 +137,6 @@
         (alter account update-in [:operations] 
                conj (prepare-operation "DESC2" 200 2017 01 10))
         (alter account update-in [:operations] 
-               conj (prepare-operation "DESC3" -50 2017 01 10)))))
+               conj (prepare-operation "DESC3" -500 2017 01 11)))))
 
 
