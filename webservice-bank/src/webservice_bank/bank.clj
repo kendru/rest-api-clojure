@@ -1,6 +1,9 @@
 (ns webservice-bank.bank
    (:require [clj-time.core :as t]))
 
+(defn soma []
+  (+ 2 2))
+
 (defn date [year month day]
   "Create local date"
   (t/local-date year month day))
@@ -80,10 +83,12 @@
 ; (get-all-operations-from-acc 12345678)
 ; (get-periods-of-debit op2)
 
+
+
 (def trxs-acc (atom [])) ; a resposta esta vindo com dois vector [[ ]]
 
-(defn get-all-operations-from-account []
-   (doseq [op (@joey :operations)]
+(defn get-all-operations-from-account [acc]
+   (doseq [op (@acc :operations)]
      (swap! trxs-acc conj @op)))
 
 (defn get-balance-per-day-account []
@@ -94,9 +99,9 @@
         {:date date :balance 
          (reduce + (map :amount trxs-acc))}))))
 
-(defn negative []
-  (when (neg? (get-balance (@joey :account-number)))
-   ))
+;(defn negative []
+ ; (when (neg? (get-balance (@joey :account-number)))
+  ; ))
 
 ; (filter #(neg? :balance) (get-balance-per-day-account))
 
@@ -113,10 +118,10 @@
 ; TEST ----------------------------------------------------------------------------
 
 
-
 (def joey 
   "Account for tests"
   (prepare-account "joey" 12345678))
+
 
 (def paul 
   "Account for tests"

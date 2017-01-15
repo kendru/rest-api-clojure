@@ -1,9 +1,9 @@
 (ns webservice-bank.handler
-   (:require [webservice-bank.bank-handler :as bank-handler]
-            [webservice-bank.route :as routee]
-            [compojure.core :as compojure]))
-
-
+   (:require [compojure.core :refer :all]
+             [compojure.handler :as handler]
+             [ring.middleware.json :as middleware]
+             [compojure.route :as route]
+             [webservice-bank.bank :as bank]))
 
 (defn exception-middleware-fn [handler request]
  "Treat exception"
@@ -22,17 +22,35 @@
   (or (handler request)
    {:status 404 :body (str "404 Not Found:" (:uri request))})))
 
+(defroutes app-routes
+  (POST "/" request
+    (let [name (or (get-in request [:params :name])
+                   (get-in request [:body :name])
+                   "John Doe")]
+      {:status 200
+       :body {:name name
+       :desc (str "The name you sent to me was " name)}}))
+    (GET "/soma" request 
+         (prn "aqui")) ; curl -X GET  http://localhost:3001/soma
+  (route/resources "/"))
 
-(compojure/defroutes route-handler
-  "Set all routes"
-   (compojure/context "/bank" []
-                     bank-handler/bank-handler))
-    
-  (def full-handler
-    "Join all middlewares"
-    (-> route-handler
+
+(def app
+  (-> (handler/site app-routes)
+      (middleware/wrap-json-body {:keywords? true})
+      middleware/wrap-json-response
       not-found-middleware
       wrap-exception-middleware))
+
+
+
+
+
+
+
+
+
+
 
 
 
