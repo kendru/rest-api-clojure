@@ -1,8 +1,8 @@
 (ns webservice-bank.bank
    (:require [clj-time.core :as t]))
 
-(defn soma []
-  (+ 2 2))
+(defn soma [numero]
+  (+ 2 numero))
 
 (defn date [year month day]
   "Create local date"

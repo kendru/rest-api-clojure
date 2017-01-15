@@ -1,4 +1,5 @@
 (ns webservice-bank.handler
+   (:use ring.util.response)
    (:require [compojure.core :refer :all]
              [compojure.handler :as handler]
              [ring.middleware.json :as middleware]
@@ -23,15 +24,9 @@
    {:status 404 :body (str "404 Not Found:" (:uri request))})))
 
 (defroutes app-routes
-  (POST "/" request
-    (let [name (or (get-in request [:params :name])
-                   (get-in request [:body :name])
-                   "John Doe")]
-      {:status 200
-       :body {:name name
-       :desc (str "The name you sent to me was " name)}}))
-    (GET "/soma" request 
-         (prn "aqui")) ; curl -X GET  http://localhost:3001/soma
+  ;curl -X GET  http://localhost:3001/balance/12345678
+  (GET "/balance/:acc-number" [acc-number]
+       (response {:acc-number acc-number :balance (bank/get-balance (Long/parseLong acc-number))}))
   (route/resources "/"))
 
 
