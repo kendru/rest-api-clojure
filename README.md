@@ -71,6 +71,7 @@ responses.
 <h1>Endpoints</h1>
 
 <b>Second step:</b> Get the current balance
-<b>GET</b> /balance/:acc-number
+
+GET /balance/:acc-number
 
 Use for example: /balance/12345678
