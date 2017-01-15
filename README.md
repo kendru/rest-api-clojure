@@ -1,4 +1,7 @@
-<b>Start server</b> <i>lein ring server</i>
+<h1>Steps</h1>
+
+<b>1. Start server</b> <i>lein ring server</i>
+<b>2. Follow the endpoints below</b>
 
 
 <h1>Endpoints</h1>
