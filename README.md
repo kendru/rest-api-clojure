@@ -1,17 +1,30 @@
 <h1>Steps</h1>
 
-<b>1. Start server</b> <i>lein ring server</i>
-<b>2. Follow the endpoints below</b>
+<b>1.</b> Start server <i>lein ring server</i>
+
+<b>2.</b> Follow the endpoints below
+
+<b>3.</b> Make the tests via <i>curl</i>
 
 
 <h1>Endpoints</h1>
 
+
+<b>First step:</b> adding the operations on that checking account
+
+POST /operation
+
+BODY {"acc-number":12345678, "description":"DEPOSIT", "amount":50, "year":2017, "month":1, "day":20}
+
+Test via curl: <i>curl -H "Content-Type: application/json" -X POST -d '{"acc-number":12345678, "description":"DEPOSIT", "amount":50, "year":2017, "month":1, "day":20}' http://localhost:3001/operation</i>
 
 <b>Second step:</b> Get the current balance
 
 GET /balance/:acc-number
 
 Use for example: /balance/12345678
+
+Test via curl: <i>curl -X GET  http://localhost:3001/balance/12345678</i>
 
 <h1>Frameworks</h1>
 
