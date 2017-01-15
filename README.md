@@ -1,3 +1,15 @@
+<b>Start server lein ring server</b>
+
+
+<h1>Endpoints</h1>
+
+
+<b>Second step:</b> Get the current balance
+
+GET /balance/:acc-number
+
+Use for example: /balance/12345678
+
 <h1>Frameworks</h1>
 
 <li><a href="https://github.com/weavejester/compojure">Compojure</a> is a small routing library for Ring that allows web applications to be composed of small, independent parts.
@@ -68,10 +80,4 @@ This endpoint should return multiple periods, if applicable, and omit the "End:"
 All HTTP endpoints should accept and return JSON payloads as requests and
 responses. 
 
-<h1>Endpoints</h1>
 
-<b>Second step:</b> Get the current balance
-
-GET /balance/:acc-number
-
-Use for example: /balance/12345678
