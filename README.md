@@ -1,4 +1,4 @@
-<b>Start server lein ring server</b>
+<b>Start server</b> <i>lein ring server</i>
 
 
 <h1>Endpoints</h1>
