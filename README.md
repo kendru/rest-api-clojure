@@ -68,4 +68,9 @@ This endpoint should return multiple periods, if applicable, and omit the "End:"
 All HTTP endpoints should accept and return JSON payloads as requests and
 responses. 
 
+<h1>Endpoints</h1>
 
+<b>Second step:</b> Get the current balance
+<b>GET</b> /balance/:acc-number
+
+Use for example: /balance/12345678
