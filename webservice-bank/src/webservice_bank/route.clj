@@ -1,6 +1,5 @@
 (ns webservice-bank.route)
 
-
 (defn route-matches [verb path-spec request]
  (when (= (:request-method request) verb)
   (let [path-regex (.replaceAll path-spec "/:([^/]+)" "/([^/]+)")
