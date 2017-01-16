@@ -1,4 +1,4 @@
-(ns webservice-bank.stop-three
+(ns webservice-bank.step-three
   (:require [clj-time.core :as t]))
 
 (def test-bank
